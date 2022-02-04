@@ -1,0 +1,33 @@
+image: python:latest
+
+variables:
+  app_name: "someapp.py"
+  app_file: "main.py"
+
+
+before_script:
+  - python -V  # Print out python version for debugging 
+
+apilint:
+  image: python:3.9-alpine3.14
+  script:
+    - pip3 install -r requirements.txt
+    - pip3 install pylint
+    - pylint app/main.py
+
+apitest:
+  image: python:3.9-alpine3.14
+  script:
+    - pip3 install -r requirements.txt
+    - pip3 install pytest
+    - pytest
+
+apicompile:
+  image: python:3.9-alpine3.14
+  script:
+    - python -m compileall app
+
+apideploy:
+  image: docker:19.03.12
+  script:
+    - docker build -t courses-api:v1 .
